@@ -1,0 +1,14 @@
+The A* pathfinder algorithm is used to find the optimal solution of the possible paths, and in this challenge it will begin from the top left of the gird and find the bottom right space in the grid which it is navigating. 
+This will later be adjustable by the user, along with how dense the walls appear.
+
+Formula: f(n) = g(n) + h(n)
+
+f(n) is a function to asses the cost of the path currently being assessed by the algorithm which has two components:
+
+The distance already traveled from the start on the path to find the end is g(n), this value is know as it have already been assessed.
+
+The A* is an algorithm which uses a heuristic 'h(n)' which prevents it from simply exhausting all possible paths to the end point. 
+A heuristic is an optimization put onto an algorithm, in this case we will make the heuristic such that the algorithm is unlike to test moving away from the the end point as this will likely be inefficient. 
+The value of h(n) is unknown and is a type of best estimation of the remaining path to the end, in making a heuristic it is always best to under estimate this remaining distance - this will most simply be the distance from the current point to the end, but this will probably not be the best to use.  
+
+I have already watch the videos for this challenge so I'm hoping that I can give this a real good shot before re-watching the mini series, however it is currently 10pm so I might come back tomorrow and have forgotten it all. 
