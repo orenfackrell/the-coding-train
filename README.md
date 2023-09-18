@@ -1,1 +1,7 @@
 # the-coding-train
+
+I have recently found the youtube channel of "The Coding Train" (https://thecodingtrain.com/challenges/3-snake-game & https://www.youtube.com/@TheCodingTrain) and have found his videos to be very fun, his teaching style easy to follow and the problems that he is solving are very much to my taste and my interests. So I will be going through the challanges on his website and youtube almost as they appear on my feed or as I look and find them. I have tried sites like leetcode and codewars before and have found there tasks / lessons too monotonous to keep me engaged in solving them, I'm hoping working on this will keep my engaged in my learning for longer.
+
+My aim with these challanges are to drastically improve my methodology with my coding. Currently I am terrible at committing my changes to code and also framing out what I will do with pseudo-code. I believe that the poor committing habbit has come from a place of anxiety about getting the code wrong or perceving the problem infront of my wrong. 
+
+So to combat these problems and to break the habits; I will first watch the explainer segment of the challange video so that I can correctly frame the problem in my head and make myself some moderately indepth pseudo-code. I will then make a first attempt to code the problem myself and have the anxiety alleviated by the knowledge that I will have a resource there ready for me when I know I have made my best attempt at the problem. Then after watching the video I will check my method and posssible seek out other examples for comparison. 
