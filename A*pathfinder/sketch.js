@@ -5,9 +5,10 @@ let endNode;
 let openSet;
 let closedSet;
 let path;
-let rows = 10;
-let cols = 10;
+let rows = 25;
+let cols = 25;
 let wallPercent = 10;
+let solution = undefined;
 let w, h;
 
 class Node {
@@ -120,8 +121,11 @@ function draw() {
     closedSet[i].show(color(255, 0, 0));
   }
   // Draw path in blue
-  for (let i = 0; i < path.length; i++) {
-    path[i].show(color(0, 0, 255));
+  if (solution) {
+    for (let i = 0; i < path.length; i++) {
+      path[i].show(color(0, 0, 255));
+    }
+    noLoop();
   }
   aStar();
 }
@@ -146,6 +150,7 @@ function aStar() {
         temp = temp.previous; // then make the previous node the current node and repeat until there is no previous node
       }
       console.log("Solution found!");
+      solution = true;
     }
 
     // Move the current node from open set to closed set as its been tested
