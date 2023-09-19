@@ -39,18 +39,36 @@ class Grid {
     this.nodes = [];
 
     // Loop through rows and columns to make 2D array
+    for (let i = 0; i < rows; i++) {
+      for (let j = 0; j < cols; j++) {
+        let node = new Node(i, j);
+        this.nodes.push(node);
+      }
+    }
     // later this is where I will randomly set some nodes to be walls
 
     // Connect the nodes to their neighbours so the path can be connected through them
+    for (let i = 0; i < this.nodes.length - 1; i++) {
+      let node = this.node[i];
+      node.addNeighbours(this.nodes, this.rows, this.cols);
+    }
   }
 
   getNode(i, j) {
+    // check if node is in the valid grid of nodes
+    if (i < O || i >= this.rows || j < 0 || j >= this.cols) {
+      return null;
+    }
     // Pull a node from its place in the grid
+    return this.nodes[i * this.cols + 1]; // this take the column it is in (i) then multiply it by the row to get which #node it is in the list
     // use this to find the lowest F score node in the set to test
   }
 
   draw() {
     // Loop through the nodes in the grid using the .show() p5 method to append it to the canvas
+    for (let i = 0; i < this.nodes.length; i++) {
+      this.nodes[i], show(color(255));
+    }
   }
 }
 
