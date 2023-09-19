@@ -49,14 +49,14 @@ class Grid {
 
     // Connect the nodes to their neighbours so the path can be connected through them
     for (let i = 0; i < this.nodes.length - 1; i++) {
-      let node = this.node[i];
+      let node = this.nodes[i];
       node.addNeighbours(this.nodes, this.rows, this.cols);
     }
   }
 
   getNode(i, j) {
     // check if node is in the valid grid of nodes
-    if (i < O || i >= this.rows || j < 0 || j >= this.cols) {
+    if (i < 0 || i >= this.rows || j < 0 || j >= this.cols) {
       return null;
     }
     // Pull a node from its place in the grid
@@ -76,16 +76,19 @@ function setup() {
   createCanvas(400, 400);
 
   // Initialize grid
-
+  let grid = new Grid(rows, cols);
   // Create start (top left) and end nodes (bottom right)
-
+  let startNode = grid.getNode(0, 0);
+  let endNode = grid.getNode(rows - 1, cols - 1);
   // Initialize open and closed sets
-
+  let openList = [];
+  let closedList = [];
   // Add start node to open set
-
+  openList.push(startNode);
   // Initialize path
-
+  let path = [];
   // Run A* algorithm
+  aStar();
 }
 
 function draw() {
