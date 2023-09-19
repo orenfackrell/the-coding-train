@@ -7,6 +7,7 @@ let closedSet;
 let path;
 let rows = 10;
 let cols = 10;
+let w, h;
 
 class Node {
   constructor(i, j) {
@@ -29,6 +30,12 @@ class Node {
     if (i < grid.length - 1) this.neighbours.push(grid[i + 1][j]); // if the node is not on the right edge, add the right neighbour
     if (j > 0) this.neighbours.push(grid[i][j - 1]); // if the node is not on the top edge, add the neighbour above
     if (j < grid[0].length - 1) this.neighbours.push(grid[i][j + 1]); // if the node is not on the bottom edge, add the neighbour below
+  }
+
+  show(color) {
+    fill(color);
+    stroke(0);
+    rect(this.i * w, this.j * h, w, h);
   }
 }
 
@@ -60,33 +67,35 @@ class Grid {
       return null;
     }
     // Pull a node from its place in the grid
-    return this.nodes[i * this.cols + 1]; // this take the column it is in (i) then multiply it by the row to get which #node it is in the list
+    return this.nodes[i * this.cols + j]; // this take the column it is in (i) then multiply it by the row to get which #node it is in the list
     // use this to find the lowest F score node in the set to test
   }
 
   draw() {
     // Loop through the nodes in the grid using the .show() p5 method to append it to the canvas
     for (let i = 0; i < this.nodes.length; i++) {
-      this.nodes[i], show(color(255));
+      this.nodes[i].show(color(255, 255, 255));
     }
   }
 }
 
 function setup() {
   createCanvas(400, 400);
-
+  // get the dimensions for the nodes in the grid
+  w = width / cols;
+  h = height / rows;
   // Initialize grid
-  let grid = new Grid(rows, cols);
+  grid = new Grid(rows, cols);
   // Create start (top left) and end nodes (bottom right)
-  let startNode = grid.getNode(0, 0);
-  let endNode = grid.getNode(rows - 1, cols - 1);
+  startNode = grid.getNode(0, 0);
+  endNode = grid.getNode(rows - 1, cols - 1);
   // Initialize open and closed sets
-  let openList = [];
-  let closedList = [];
+  openSet = [];
+  closedSet = [];
   // Add start node to open set
-  openList.push(startNode);
+  openSet.push(startNode);
   // Initialize path
-  let path = [];
+  path = [];
   // Run A* algorithm
   aStar();
 }
@@ -94,12 +103,19 @@ function setup() {
 function draw() {
   background(220);
   // Draw grid
-
-  // Draw open set nodes
-
-  // Draw closed set nodes
-
-  // Draw path
+  grid.draw();
+  // Draw open set nodes in green
+  for (let i = 0; i < openSet.length; i++) {
+    openSet[i].show(color(0, 255, 0));
+  }
+  // Draw closed set nodes in red
+  for (let i = 0; i < closedSet.length; i++) {
+    closedSet[i].show(color(255, 0, 0));
+  }
+  // Draw path in blue
+  for (let i = 0; i < path.length; i++) {
+    path[i].show(color(0, 0, 255));
+  }
 }
 
 function aStar() {
