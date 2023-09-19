@@ -7,6 +7,7 @@ let closedSet;
 let path;
 let rows = 10;
 let cols = 10;
+let wallPercent = 10;
 let w, h;
 
 class Node {
@@ -19,21 +20,27 @@ class Node {
     this.neighbours = [];
     this.previous = undefined;
     this.wall = false;
+
+    if (random(1) < wallPercent / 100) {
+      this.wall = true;
+    }
   }
 
   addNeighbours(grid) {
-    // for this node grab the coordinates
     let i = this.i;
     let j = this.j;
 
-    if (i > 0) this.neighbours.push(grid[i - 1][j]); // if the node is not on the left edge, add the left neighbour
-    if (i < grid.length - 1) this.neighbours.push(grid[i + 1][j]); // if the node is not on the right edge, add the right neighbour
-    if (j > 0) this.neighbours.push(grid[i][j - 1]); // if the node is not on the top edge, add the neighbour above
-    if (j < grid[0].length - 1) this.neighbours.push(grid[i][j + 1]); // if the node is not on the bottom edge, add the neighbour below
+    if (i > 0) this.neighbours.push(grid[i - 1][j]);
+    if (i < grid.length - 1) this.neighbours.push(grid[i + 1][j]);
+    if (j > 0) this.neighbours.push(grid[i][j - 1]);
+    if (j < grid[0].length - 1) this.neighbours.push(grid[i][j + 1]);
   }
 
   show(color) {
     fill(color);
+    if (this.wall) {
+      fill(0);
+    }
     stroke(0);
     rect(this.i * w, this.j * h, w, h);
   }
@@ -43,21 +50,22 @@ class Grid {
   constructor(rows, cols) {
     this.rows = rows;
     this.cols = cols;
-    this.nodes = [];
+    this.nodes = new Array(rows);
 
-    // Loop through rows and columns to make 2D array
+    // Create nodes
     for (let i = 0; i < rows; i++) {
+      this.nodes[i] = new Array(cols);
       for (let j = 0; j < cols; j++) {
         let node = new Node(i, j);
-        this.nodes.push(node);
+        this.nodes[i][j] = node;
       }
     }
-    // later this is where I will randomly set some nodes to be walls
 
-    // Connect the nodes to their neighbours so the path can be connected through them
-    for (let i = 0; i < this.nodes.length - 1; i++) {
-      let node = this.nodes[i];
-      node.addNeighbours(this.nodes, this.rows, this.cols);
+    // Connect neighbors
+    for (let i = 0; i < rows; i++) {
+      for (let j = 0; j < cols; j++) {
+        this.nodes[i][j].addNeighbours(this.nodes);
+      }
     }
   }
 
@@ -67,14 +75,15 @@ class Grid {
       return null;
     }
     // Pull a node from its place in the grid
-    return this.nodes[i * this.cols + j]; // this take the column it is in (i) then multiply it by the row to get which #node it is in the list
+    return this.nodes[i][j]; // this take the column it is in (i) then multiply it by the row to get which #node it is in the list
     // use this to find the lowest F score node in the set to test
   }
 
   draw() {
-    // Loop through the nodes in the grid using the .show() p5 method to append it to the canvas
-    for (let i = 0; i < this.nodes.length; i++) {
-      this.nodes[i].show(color(255, 255, 255));
+    for (let i = 0; i < this.rows; i++) {
+      for (let j = 0; j < this.cols; j++) {
+        this.nodes[i][j].show(color(255, 255, 255));
+      }
     }
   }
 }
@@ -96,8 +105,6 @@ function setup() {
   openSet.push(startNode);
   // Initialize path
   path = [];
-  // Run A* algorithm
-  aStar();
 }
 
 function draw() {
@@ -116,24 +123,75 @@ function draw() {
   for (let i = 0; i < path.length; i++) {
     path[i].show(color(0, 0, 255));
   }
+  aStar();
 }
 
 function aStar() {
   // While there are nodes in the open set {
-  // Find node with lowest f score in open set
-  // if current node is the end node, the algo ends
-  // Move the current node from open set to closed set as its been tested
-  // Now find the neighbours of the current node
-  // ignore neighbours that are in the closed set or are a wall
-  // for remaining neighbours give them a tentative g-score (parent node's g + 1)
-  // if (openSet.includes.(neighbour)) {update it's g-score to tentative g-score if it is less}
-  // else { give it the tentative g-score and move it to the open set }
-  // define the neighbours.h with a function for the heuristic
-  // then set neighbour.f = neighbour.g + neighbour.h
-  // Loop the above steps
-  // if the nodes are all exhausted then there is no solution
+  if (openSet.length > 0) {
+    let lowestF = 0; // Find node with lowest f score in open set
+    for (let i = 0; i < openSet.length; i++) {
+      if (openSet[i].f < openSet[lowestF].f) {
+        lowestF = i;
+      }
+    }
+
+    let currentNode = openSet[lowestF];
+
+    if (currentNode === endNode) {
+      let temp = currentNode; // pass the final node into a variable
+      path.push(temp); // push the final node to the path array
+      while (temp.previous) {
+        path.push(temp.previous); // push the previous node to the path
+        temp = temp.previous; // then make the previous node the current node and repeat until there is no previous node
+      }
+      console.log("Solution found!");
+    }
+
+    // Move the current node from open set to closed set as its been tested
+    openSet.splice(lowestF, 1);
+    closedSet.push(currentNode);
+    // Now find the neighbours of the current node
+    let neighbours = currentNode.neighbours;
+    for (i = 0; i < neighbours.length; i++) {
+      let neighbour = neighbours[i];
+
+      // ignore neighbours that are in the closed set or are a wal
+      if (!closedSet.includes(neighbour) && !neighbour.wall) {
+        // for remaining neighbours give them a tentative g-score (parent node's g + 1)
+        let tempG = currentNode.g + 1;
+
+        let newPath = false;
+        if (openSet.includes(neighbour)) {
+          // if (openSet.includes.(neighbour)) {update it's g-score to tentative g-score if it is less}
+          if (tempG < neighbour.g) {
+            neighbour.g = tempG;
+            newPath = true;
+          }
+          // else { give it the tentative g-score and move it to the open set }
+        } else {
+          neighbour.g = tempG;
+          newPath = true;
+          openSet.push(neighbour);
+        }
+
+        // define the neighbours.h with a function for the heuristic
+        // then set neighbour.f = neighbour.g + neighbour.h
+        if (newPath) {
+          neighbour.h = heuristic(neighbour, endNode);
+          neighbour.f = neighbour.g + neighbour.h;
+          neighbour.previous = currentNode;
+        }
+        // if the nodes are all exhausted then there is no solution
+      }
+    }
+  } else {
+    console.log("No solution found!");
+    noLoop();
+  }
 }
 
-function heuristic() {
+function heuristic(nodeA, nodeB) {
   // use the Manhattan distance as in this example the path can only go in the x and y directions
+  return abs(nodeA.i - nodeB.i) + abs(nodeA.j - nodeB.j);
 }
