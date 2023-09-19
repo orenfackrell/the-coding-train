@@ -21,7 +21,14 @@ class Node {
   }
 
   addNeighbours(gird) {
-    // Add all nodes to the sides that are still in the grid to the neighbours array
+    // for this node grab the coordinates
+    let i = this.i;
+    let j = this.j;
+
+    if (i > 0) this.neighbours.push(grid[i - 1][j]); // if the node is not on the left edge, add the left neighbour
+    if (i < rows.length - 1) this.neighbours.push(grid[i + 1][j]); // if the node is not on the right edge, add the right neighbour
+    if (j > 0) this.neighbours.push(grid[i][j - 1]); // if the node is not on the top edge, add the neighbour above
+    if (j < rows.length - 1) this.neighbours.push(grid[i][j + 1]); // if the node is not on the bottom edge, add the neighbour below
   }
 }
 
