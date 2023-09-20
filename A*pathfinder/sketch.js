@@ -5,8 +5,8 @@ let endNode;
 let openSet;
 let closedSet;
 let path;
-let rows = 25;
-let cols = 25;
+let rows = 10;
+let cols = 10;
 let wallPercent = 10;
 let solution = undefined;
 let w, h;
@@ -89,8 +89,11 @@ class Grid {
   }
 }
 
-function setup() {
-  createCanvas(400, 400);
+function newProblem() {
+  solution = false;
+  let messageElement = document.getElementById("message-container");
+  messageElement.textContent = "";
+
   // get the dimensions for the nodes in the grid
   w = width / cols;
   h = height / rows;
@@ -99,6 +102,8 @@ function setup() {
   // Create start (top left) and end nodes (bottom right)
   startNode = grid.getNode(0, 0);
   endNode = grid.getNode(rows - 1, cols - 1);
+  startNode.wall = false; // Ensure start node is not a wall
+  endNode.wall = false; // Ensure end node is not a wall
   // Initialize open and closed sets
   openSet = [];
   closedSet = [];
@@ -106,6 +111,21 @@ function setup() {
   openSet.push(startNode);
   // Initialize path
   path = [];
+}
+
+function setup() {
+  let canvas = createCanvas(800, 800);
+  canvas.parent("canvas-container");
+  newProblem();
+}
+
+function drawPath() {
+  for (let i = 0; i < path.length; i++) {
+    path[i].show(color(0, 0, 255));
+  }
+  let messageElement = document.getElementById("message-container");
+  messageElement.textContent =
+    "Solution found! Number of tiles in the optimal path is " + path.length;
 }
 
 function draw() {
@@ -120,14 +140,11 @@ function draw() {
   for (let i = 0; i < closedSet.length; i++) {
     closedSet[i].show(color(255, 0, 0));
   }
-  // Draw path in blue
+  aStar();
   if (solution) {
-    for (let i = 0; i < path.length; i++) {
-      path[i].show(color(0, 0, 255));
-    }
+    drawPath();
     noLoop();
   }
-  aStar();
 }
 
 function aStar() {
@@ -143,13 +160,12 @@ function aStar() {
     let currentNode = openSet[lowestF];
 
     if (currentNode === endNode) {
-      let temp = currentNode; // pass the final node into a variable
-      path.push(temp); // push the final node to the path array
+      let temp = currentNode;
+      path.push(temp);
       while (temp.previous) {
-        path.push(temp.previous); // push the previous node to the path
-        temp = temp.previous; // then make the previous node the current node and repeat until there is no previous node
+        path.push(temp.previous);
+        temp = temp.previous;
       }
-      console.log("Solution found!");
       solution = true;
     }
 
@@ -199,4 +215,12 @@ function aStar() {
 function heuristic(nodeA, nodeB) {
   // use the Manhattan distance as in this example the path can only go in the x and y directions
   return abs(nodeA.i - nodeB.i) + abs(nodeA.j - nodeB.j);
+}
+
+function updateVariables() {
+  rows = document.getElementById("rows").value;
+  cols = document.getElementById("cols").value;
+  wallPercent = document.getElementById("wallPercent").value;
+  newProblem(); // Reset the sketch with the new variables
+  loop(); // Start the draw loop again
 }

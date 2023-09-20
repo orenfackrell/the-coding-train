@@ -11,8 +11,26 @@
     <script src="libraries/p5.min.js"></script>
     <script src="libraries/p5.sound.min.js"></script>
   </head>
-
   <body>
-    <script src="sketch.js"></script>
+    <div id="canvas-container">
+      <script src="sketch.js"></script>
+    </div>
+    <div id="input-container">
+      <label for="rows">Rows:</label>
+      <input type="number" id="rows" name="rows" min="1" value="10" />
+      <label for="cols">Columns:</label>
+      <input type="number" id="cols" name="cols" min="1" value="10" />
+      <label for="wallPercent">Wall Percent (%):</label>
+      <input
+        type="number"
+        id="wallPercent"
+        name="wallPercent"
+        value="10"
+        min="0"
+        max="100"
+      />
+      <button onclick="updateVariables()">Update</button>
+      <div id="message-container"></div>
+    </div>
   </body>
 </html>
