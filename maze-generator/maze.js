@@ -1,7 +1,13 @@
 // global variables
 let grid;
+let startNode;
+let endNode;
+let openSet;
+let closedSet;
+let path;
 let rows = 10;
 let cols = 10;
+let solution = undefined;
 let nodeDimension;
 let stack = [];
 
@@ -99,7 +105,35 @@ function draw() {
 
   aStarToggle = document.getElementById("a-star");
   if (aStarToggle) {
+    solution = false;
+    let messageElement = document.getElementById("message-container");
+    messageElement.textContent = "";
+
+    // Create start (top left) and end nodes (bottom right)
+    startNode = grid.getNode(0, 0);
+    endNode = grid.getNode(rows - 1, cols - 1);
+    // Initialize open and closed sets
+    openSet = [];
+    closedSet = [];
+    // Add start node to open set
+    openSet.push(startNode);
+    // Initialize path
+    path = [];
+
+    for (let i = 0; i < openSet.length; i++) {
+      openSet[i].show(color(0, 255, 0));
+    }
+    // Draw closed set nodes in red
+    for (let i = 0; i < closedSet.length; i++) {
+      closedSet[i].show(color(255, 0, 0));
+    }
+
     aStar();
+
+    if (solution) {
+      drawPath();
+      noLoop();
+    }
   }
 }
 
@@ -159,4 +193,113 @@ function updateVariables() {
   loop(); // Start the draw loop again
 }
 
-function aStar() {}
+class PathfinderNode extends Node {
+  constructor(i, j) {
+    super(i, j);
+    this.g = 0;
+    this.h = 0;
+    this.f = 0;
+    this.previous = undefined;
+    this.neighbours = [];
+  }
+
+  addNeighbours(grid) {
+    let i = this.i;
+    let j = this.j;
+
+    if (i > 0) this.neighbours.push(grid[i - 1][j]);
+    if (i < grid.length - 1) this.neighbours.push(grid[i + 1][j]);
+    if (j > 0) this.neighbours.push(grid[i][j - 1]);
+    if (j < grid[0].length - 1) this.neighbours.push(grid[i][j + 1]);
+  }
+
+  show(color) {
+    fill(color);
+    noStroke();
+    rect(
+      this.i * nodeDimension,
+      this.j * nodeDimension,
+      nodeDimension,
+      nodeDimension
+    );
+  }
+}
+
+function aStar() {
+  // While there are nodes in the open set {
+  if (openSet.length > 0) {
+    let lowestF = 0; // Find node with lowest f score in open set
+    for (let i = 0; i < openSet.length; i++) {
+      if (openSet[i].f < openSet[lowestF].f) {
+        lowestF = i;
+      }
+    }
+
+    let currentNode = openSet[lowestF];
+
+    if (currentNode === endNode) {
+      let temp = currentNode;
+      path.push(temp);
+      while (temp.previous) {
+        path.push(temp.previous);
+        temp = temp.previous;
+      }
+      solution = true;
+    }
+
+    // Move the current node from open set to closed set as its been tested
+    openSet.splice(lowestF, 1);
+    closedSet.push(currentNode);
+    // Now find the neighbours of the current node
+    let neighbours = currentNode.neighbours;
+    for (i = 0; i < neighbours.length; i++) {
+      let neighbour = neighbours[i];
+
+      // ignore neighbours that are in the closed set or are a wal
+      if (!closedSet.includes(neighbour) && !neighbour.wall) {
+        // for remaining neighbours give them a tentative g-score (parent node's g + 1)
+        let tempG = currentNode.g + 1;
+
+        let newPath = false;
+        if (openSet.includes(neighbour)) {
+          // if (openSet.includes.(neighbour)) {update it's g-score to tentative g-score if it is less}
+          if (tempG < neighbour.g) {
+            neighbour.g = tempG;
+            newPath = true;
+          }
+          // else { give it the tentative g-score and move it to the open set }
+        } else {
+          neighbour.g = tempG;
+          newPath = true;
+          openSet.push(neighbour);
+        }
+
+        // define the neighbours.h with a function for the heuristic
+        // then set neighbour.f = neighbour.g + neighbour.h
+        if (newPath) {
+          neighbour.h = heuristic(neighbour, endNode);
+          neighbour.f = neighbour.g + neighbour.h;
+          neighbour.previous = currentNode;
+        }
+        // if the nodes are all exhausted then there is no solution
+      }
+    }
+  } else {
+    console.log("No solution found!");
+    noLoop();
+  }
+}
+
+function heuristic(nodeA, nodeB) {
+  // use the Manhattan distance as in this example the path can only go in the x and y directions
+  return abs(nodeA.i - nodeB.i) + abs(nodeA.j - nodeB.j);
+}
+
+function drawPath() {
+  for (let i = 0; i < path.length; i++) {
+    path[i].show(color(0, 0, 255));
+  }
+  let messageElement = document.getElementById("message-container");
+  messageElement.textContent =
+    "Solution found! Number of tiles in the optimal path is " + path.length;
+}
