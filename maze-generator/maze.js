@@ -24,8 +24,17 @@ class Node {
     if (j > 0) this.neighbours.push(grid[i][j - 1]);
     if (j < grid[0].length - 1) this.neighbours.push(grid[i][j + 1]);
   }
-
   show() {
+    let i = this.i * nodeDimension;
+    let j = this.j * nodeDimension;
+    stroke(0);
+    if (this.walls[0] == true) line(i, j, i + nodeDimension, j); //top
+    if (this.walls[0] == true)
+      line(i + nodeDimension, j, i + nodeDimension, j + nodeDimension); // right
+    if (this.walls[0] == true)
+      line(i, j + nodeDimension, i + nodeDimension, j + nodeDimension); // bottom
+    if (this.walls[0] == true) line(i, j, i, j + nodeDimension); //left
+
     // draw the nodes in this by making all of its walls rather than filling it with a stroke
   }
 }
@@ -63,7 +72,7 @@ class Grid {
   draw() {
     for (let i = 0; i < this.rows; i++) {
       for (let j = 0; j < this.cols; j++) {
-        this.nodes[i][j].show(color(255, 255, 255));
+        this.nodes[i][j].show(color(255));
       }
     }
   }
@@ -71,29 +80,27 @@ class Grid {
 
 function setup() {
   createCanvas(400, 400);
+  nodeDimension = width / cols; //this is for only a square gird
+
+  grid = new Grid(rows, cols);
+
+  grid.draw();
 }
 
 function draw() {
-  background(220);
-  grid = new Grid();
-
-  grid.draw();
-
-  // generateMaze();
+  generateMaze();
 }
 
 function generateMaze() {
   // init grid[0][0] = current;
   // set current.visited = true;
   // stack.push(current)
-
   // if (stack.length > 0){
-    // stack.pop() = current;
-    // if (current.neighbours) {
-      // select random neighbour node from  current.neighbours
-
-        // if (neighbour.visited = false){
-          // remove the wall between current and neighbour;
-          // neighbour.visited = true 
-          // stack.push(neighbour)}}}
+  // stack.pop() = current;
+  // if (current.neighbours) {
+  // select random neighbour node from  current.neighbours
+  // if (neighbour.visited = false){
+  // remove the wall between current and neighbour;
+  // neighbour.visited = true
+  // stack.push(neighbour)}}}
 }
