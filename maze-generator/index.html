@@ -13,14 +13,15 @@
   </head>
 
   <body>
-    <script src="maze.js"></script>
+    <div id="canvas-container">
+      <script src="maze.js"></script>
+    </div>
     <div id="input-container">
       <label for="rows">Rows:</label>
       <input type="number" id="rows" name="rows" min="1" value="10" />
       <label for="cols">Columns:</label>
       <input type="number" id="cols" name="cols" min="1" value="10" />
       <button onclick="updateVariables()">Update</button>
-      <div id="message-container"></div>
     </div>
   </body>
 </html>

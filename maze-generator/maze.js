@@ -36,7 +36,7 @@ class Node {
     if (this.walls[3]) line(i, j, i, j + nodeDimension); //left
 
     if (this.visited) {
-      fill(0, 0, 255);
+      fill(255);
       noStroke();
       rect(i, j, nodeDimension, nodeDimension);
     }
@@ -83,7 +83,8 @@ class Grid {
 }
 
 function setup() {
-  createCanvas(400, 400);
+  let canvas = createCanvas(800, 800);
+  canvas.parent("canvas-container");
   nodeDimension = width / cols; //this is for only a square gird
 
   grid = new Grid(rows, cols);
