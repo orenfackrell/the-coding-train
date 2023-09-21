@@ -96,6 +96,11 @@ function draw() {
   grid.draw();
 
   generateMaze();
+
+  aStarToggle = document.getElementById("a-star");
+  if (aStarToggle) {
+    aStar();
+  }
 }
 
 function generateMaze() {
@@ -153,3 +158,5 @@ function updateVariables() {
   setup(); // Reset the sketch with the new variables
   loop(); // Start the draw loop again
 }
+
+function aStar() {}

@@ -1,5 +1,7 @@
-Now that I have just successfully completed the A* Pathfinder algorithm I need something in which to find the path!
+Now that I have just successfully completed the A\* Pathfinder algorithm I need something in which to find the path!
 
 Of course, as is the point of this whole repo, The Coding Train has got a video series on this exact thing. From the description the algorithm being used is a "depth-first search algorithm with recursive backtracking", and with the links provided in the references I am sure that there is enough here for me to give this a really good go. I have been listening to these episodes in the background at work today so I am not going in 100% blind.
 
 I can already see that in wanting to combine this and my last project there will arise the issue in what is being defined as 'walls' for the cells / nodes in these respective grids, but that is a problem to solve later. Additionally I want to combine this whole repo into a single page from which you can access all of these coding challenges that I have completed, and for that I think that I will have a new repo which calls from both of these and adjusts them as necessary.
+
+Now that I have the maze generation sorted I want to implement my A\* pathfinder into it so that I can solve them in the same place
