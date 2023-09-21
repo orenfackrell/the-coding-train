@@ -147,8 +147,9 @@ function generateMaze() {
 }
 
 function updateVariables() {
-  rows = document.getElementById("rows").value;
-  cols = document.getElementById("cols").value;
+  gridDimension = document.getElementById("rows").value;
+  rows = gridDimension;
+  cols = gridDimension;
   setup(); // Reset the sketch with the new variables
   loop(); // Start the draw loop again
 }
