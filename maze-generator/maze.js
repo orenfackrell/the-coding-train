@@ -30,22 +30,25 @@ class Node {
     if (j > 0) this.neighbours.push(grid[i][j - 1]);
     if (j < grid[0].length - 1) this.neighbours.push(grid[i][j + 1]);
   }
-  show() {
+
+  fill(color) {
     let i = this.i * nodeDimension;
     let j = this.j * nodeDimension;
-    stroke(0);
+    noStroke();
+    fill(color);
+    rect(i, j, nodeDimension, nodeDimension);
+  }
+
+  drawWalls() {
+    let i = this.i * nodeDimension;
+    let j = this.j * nodeDimension;
+    stroke(0); // Set stroke color to black
     if (this.walls[0]) line(i, j, i + nodeDimension, j); //top
     if (this.walls[1])
       line(i + nodeDimension, j, i + nodeDimension, j + nodeDimension); // right
     if (this.walls[2])
       line(i, j + nodeDimension, i + nodeDimension, j + nodeDimension); // bottom
     if (this.walls[3]) line(i, j, i, j + nodeDimension); //left
-
-    if (this.visited) {
-      fill(255);
-      noStroke();
-      rect(i, j, nodeDimension, nodeDimension);
-    }
   }
 }
 
@@ -82,7 +85,7 @@ class Grid {
   draw() {
     for (let i = 0; i < this.rows; i++) {
       for (let j = 0; j < this.cols; j++) {
-        this.nodes[i][j].show(color(255));
+        this.nodes[i][j].drawWalls(color(255));
       }
     }
   }
@@ -117,12 +120,14 @@ function draw() {
 
   // Color the nodes in the open set green
   for (let i = 0; i < openSet.length; i++) {
-    openSet[i].show(color(0, 255, 0));
+    openSet[i].fill(color(0, 255, 0));
+    openSet[i].drawWalls();
   }
 
   // Color the nodes in the closed set red
   for (let i = 0; i < closedSet.length; i++) {
-    closedSet[i].show(color(255, 0, 0));
+    closedSet[i].fill(color(255, 0, 0));
+    closedSet[i].drawWalls();
   }
 
   let aStarToggle = document.getElementById("a-star");
@@ -306,7 +311,8 @@ function heuristic(nodeA, nodeB) {
 function drawPath() {
   console.log("drawing");
   for (let i = 0; i < path.length; i++) {
-    path[i].show(color(0, 0, 255));
+    path[i].fill(color(255, 0, 255));
+    path[i].drawWalls();
   }
   let messageElement = document.getElementById("message-container");
   messageElement.textContent =
