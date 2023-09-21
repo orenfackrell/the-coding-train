@@ -28,14 +28,18 @@ class Node {
     let i = this.i * nodeDimension;
     let j = this.j * nodeDimension;
     stroke(0);
-    if (this.walls[0] == true) line(i, j, i + nodeDimension, j); //top
-    if (this.walls[0] == true)
+    if (this.walls[0]) line(i, j, i + nodeDimension, j); //top
+    if (this.walls[1])
       line(i + nodeDimension, j, i + nodeDimension, j + nodeDimension); // right
-    if (this.walls[0] == true)
+    if (this.walls[2])
       line(i, j + nodeDimension, i + nodeDimension, j + nodeDimension); // bottom
-    if (this.walls[0] == true) line(i, j, i, j + nodeDimension); //left
+    if (this.walls[3]) line(i, j, i, j + nodeDimension); //left
 
-    // draw the nodes in this by making all of its walls rather than filling it with a stroke
+    if (this.visited) {
+      fill(0, 0, 255);
+      noStroke();
+      rect(i, j, nodeDimension, nodeDimension);
+    }
   }
 }
 
@@ -88,19 +92,55 @@ function setup() {
 }
 
 function draw() {
+  grid.draw();
+
   generateMaze();
 }
 
 function generateMaze() {
-  // init grid[0][0] = current;
-  // set current.visited = true;
-  // stack.push(current)
-  // if (stack.length > 0){
-  // stack.pop() = current;
-  // if (current.neighbours) {
-  // select random neighbour node from  current.neighbours
-  // if (neighbour.visited = false){
-  // remove the wall between current and neighbour;
-  // neighbour.visited = true
-  // stack.push(neighbour)}}}
+  // Choose the initial node, mark it as visited and push it to the stack
+  let currentNode = grid.getNode(0, 0);
+  currentNode.visited = true;
+  stack.push(currentNode);
+
+  // While the stack is not empty
+  while (stack.length > 0) {
+    // Pop a node from the stack and make it a current node
+    currentNode = stack.pop();
+
+    // If the current node has any neighbours which have not been visited
+    let neighbors = currentNode.neighbours;
+    let unvisitedNeighbors = neighbors.filter((neighbor) => !neighbor.visited);
+    if (unvisitedNeighbors.length > 0) {
+      // Push the current node to the stack
+      stack.push(currentNode);
+
+      // Choose one of the unvisited neighbours
+      let randomIndex = floor(random(unvisitedNeighbors.length));
+      let chosenNeighbor = unvisitedNeighbors[randomIndex];
+
+      // Remove the wall between the current node and the neighbour node
+      let x = currentNode.i - chosenNeighbor.i;
+      if (x === 1) {
+        currentNode.walls[3] = false;
+        chosenNeighbor.walls[1] = false;
+      } else if (x === -1) {
+        currentNode.walls[1] = false;
+        chosenNeighbor.walls[3] = false;
+      }
+
+      let y = currentNode.j - chosenNeighbor.j;
+      if (y === 1) {
+        currentNode.walls[0] = false;
+        chosenNeighbor.walls[2] = false;
+      } else if (y === -1) {
+        currentNode.walls[2] = false;
+        chosenNeighbor.walls[0] = false;
+      }
+
+      // Mark the chosen cell as visited and push it to the stack
+      chosenNeighbor.visited = true;
+      stack.push(chosenNeighbor);
+    }
+  }
 }
