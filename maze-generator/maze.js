@@ -50,6 +50,16 @@ class Node {
       line(i, j + nodeDimension, i + nodeDimension, j + nodeDimension); // bottom
     if (this.walls[3]) line(i, j, i, j + nodeDimension); //left
   }
+
+  drawPathLine(previousNode, color) {
+    let i1 = this.i * nodeDimension + nodeDimension / 2;
+    let j1 = this.j * nodeDimension + nodeDimension / 2;
+    let i2 = previousNode.i * nodeDimension + nodeDimension / 2;
+    let j2 = previousNode.j * nodeDimension + nodeDimension / 2;
+    stroke(color);
+    strokeWeight(3);
+    line(i1, j1, i2, j2);
+  }
 }
 
 class Grid {
@@ -229,9 +239,6 @@ class PathfinderNode extends Node {
 }
 
 function aStar() {
-  console.log("pathfinding");
-  console.log(openSet);
-
   // While there are nodes in the open set
   if (openSet.length > 0) {
     let lowestF = 0; // Find node with lowest f score in open set
@@ -242,7 +249,6 @@ function aStar() {
     }
 
     let currentNode = openSet[lowestF];
-    console.log(currentNode);
 
     if (currentNode === endNode) {
       let temp = currentNode;
@@ -284,7 +290,8 @@ function aStar() {
       }
     }
   } else {
-    console.log("No solution found!");
+    let messageElement = document.getElementById("message-container");
+    messageElement.textContent = "No solution found!";
     noLoop();
   }
 }
@@ -309,13 +316,10 @@ function heuristic(nodeA, nodeB) {
 }
 
 function drawPath() {
-  console.log("drawing");
-  for (let i = 0; i < path.length; i++) {
-    path[i].fill(color(255, 0, 255));
-    path[i].drawWalls();
+  for (let i = 0; i < path.length - 1; i++) {
+    path[i].drawPathLine(path[i + 1], color(0, 0, 255));
   }
   let messageElement = document.getElementById("message-container");
   messageElement.textContent =
     "Solution found! Number of tiles in the optimal path is " + path.length;
-  console.log(path);
 }
